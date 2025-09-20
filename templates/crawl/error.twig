@@ -1,0 +1,27 @@
+{% extends "layout/base.twig" %}
+
+{% block title %}Crawl Error - News Crawler{% endblock %}
+
+{% block content %}
+    <div class="error-container">
+        <div class="error-header">
+            <div class="error-icon">❌</div>
+            <h1>Crawling Failed</h1>
+        </div>
+
+        <div class="error-message">
+            {{ error }}
+        </div>
+
+        <div class="action-buttons">
+            <a href="/crawl" class="btn btn-primary">
+                <i class="icon">🔄</i>
+                Try Again
+            </a>
+            <a href="/articles" class="btn btn-secondary">
+                <i class="icon">📰</i>
+                View Articles
+            </a>
+        </div>
+    </div>
+{% endblock %}

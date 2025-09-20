@@ -1,0 +1,148 @@
+{% extends "layout/base.twig" %}
+
+{% block title %}Crawl Configuration - News Crawler{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <div class="page-header">
+            <h1>🔍 Crawl Configuration</h1>
+        </div>
+
+        {% if duplicateStats.total_articles > 0 %}
+            <div class="stats-panel">
+                <div class="stats-header">
+                    <h3><i class="icon">📊</i> Database Statistics</h3>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ duplicateStats.total_articles }}</span>
+                        <span class="stat-label">Total Articles</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ duplicateStats.domains|length }}</span>
+                        <span class="stat-label">Unique Domains</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ duplicateStats.potential_title_duplicates }}</span>
+                        <span class="stat-label">Potential Duplicates</span>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="info-panel">
+            <h4><i class="icon">🛡️</i> Duplicate Protection Enabled</h4>
+            <p>The system automatically detects and prevents duplicate articles based on:</p>
+            <ul class="feature-list">
+                <li>Exact URL matching</li>
+                <li>Title similarity (85% threshold)</li>
+                <li>Content similarity (80% threshold)</li>
+                <li>Content fingerprinting</li>
+            </ul>
+        </div>
+
+        <form method="POST" action="/crawl" id="crawlForm" class="crawl-form">
+            <div class="form-group">
+                <label class="form-label">Crawling Mode</label>
+                <div class="mode-selection">
+                    <div class="mode-option selected" data-mode="general">
+                        <input type="radio" name="mode" value="general" checked>
+                        <div class="mode-content">
+                            <div class="mode-title">General News Mode</div>
+                            <div class="mode-description">Crawl popular news aggregators like Google News</div>
+                        </div>
+                    </div>
+                    <div class="mode-option" data-mode="custom">
+                        <input type="radio" name="mode" value="custom">
+                        <div class="mode-content">
+                            <div class="mode-title">Custom Websites Mode</div>
+                            <div class="mode-description">Crawl specific websites you provide</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="topic" class="form-label">Search Topic *</label>
+                <input type="text" id="topic" name="topic" class="form-input" required
+                       placeholder="e.g., artificial intelligence, climate change, technology">
+                <div class="help-text">Enter the topic you want to search for in news articles</div>
+            </div>
+
+            <div class="form-group websites-section" id="websitesSection">
+                <label for="websites" class="form-label">Website URLs (one per line)</label>
+                <textarea id="websites" name="websites" class="form-textarea"
+                          placeholder="https://example.com&#10;https://news.example.org&#10;techcrunch.com"></textarea>
+                <div class="help-text">Enter website URLs, one per line. Protocol (https://) is optional.</div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-lg btn-block">
+                    <i class="icon">🚀</i>
+                    <span class="btn-text">Start Crawling</span>
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modeOptions = document.querySelectorAll('.mode-option');
+            const websitesSection = document.getElementById('websitesSection');
+            const websitesInput = document.getElementById('websites');
+            const crawlForm = document.getElementById('crawlForm');
+
+            // Mode selection handling
+            modeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const mode = this.dataset.mode;
+
+                    // Update radio buttons
+                    document.querySelector('input[name="mode"][value="general"]').checked = (mode === 'general');
+                    document.querySelector('input[name="mode"][value="custom"]').checked = (mode === 'custom');
+
+                    // Update visual selection
+                    modeOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    // Show/hide websites section
+                    if (mode === 'custom') {
+                        websitesSection.classList.add('show');
+                        websitesInput.required = true;
+                    } else {
+                        websitesSection.classList.remove('show');
+                        websitesInput.required = false;
+                    }
+                });
+            });
+
+            // Form submission handling
+            crawlForm.addEventListener('submit', function(e) {
+                const topic = document.getElementById('topic').value.trim();
+                const mode = document.querySelector('input[name="mode"]:checked').value;
+                const websites = document.getElementById('websites').value.trim();
+
+                if (!topic) {
+                    alert('Please enter a search topic');
+                    e.preventDefault();
+                    return;
+                }
+
+                if (mode === 'custom' && !websites) {
+                    alert('Please enter at least one website URL for custom mode');
+                    e.preventDefault();
+                    return;
+                }
+
+                // Show loading state
+                const submitButton = document.querySelector('.btn-primary');
+                const btnText = submitButton.querySelector('.btn-text');
+                submitButton.disabled = true;
+                btnText.textContent = 'Crawling in progress...';
+                submitButton.querySelector('.icon').textContent = '🔄';
+            });
+        });
+    </script>
+{% endblock %}

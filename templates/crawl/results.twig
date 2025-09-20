@@ -1,0 +1,67 @@
+{% extends "layout/base.twig" %}
+
+{% block title %}Crawl Results - News Crawler{% endblock %}
+
+{% block content %}
+    <div class="results-container">
+        <div class="success-header">
+            <div class="success-icon">🎉</div>
+            <h1>Crawling Complete!</h1>
+        </div>
+
+        <div class="topic-info">
+            <strong>Topic:</strong> {{ topic }}
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card info">
+                <span class="stat-number">{{ stats.found|default(0) }}</span>
+                <span class="stat-label">Articles Found</span>
+            </div>
+            <div class="stat-card success">
+                <span class="stat-number">{{ stats.saved|default(0) }}</span>
+                <span class="stat-label">Articles Saved</span>
+            </div>
+            <div class="stat-card warning">
+                <span class="stat-number">{{ stats.duplicates_skipped|default(0) }}</span>
+                <span class="stat-label">Duplicates Skipped</span>
+            </div>
+            <div class="stat-card info">
+                <span class="stat-number">{{ stats.total_articles|default(0) }}</span>
+                <span class="stat-label">Total in Database</span>
+            </div>
+        </div>
+
+        {% if stats.duplicates_skipped|default(0) > 0 %}
+            <div class="duplicate-details">
+                <h3><i class="icon">🛡️</i> Duplicate Detection Summary</h3>
+                <p>The system successfully prevented duplicate articles from being saved:</p>
+                <div class="duplicate-grid">
+                    <div class="duplicate-item">
+                        <strong>{{ stats.url_duplicates|default(0) }}</strong>
+                        <small>URL Duplicates</small>
+                    </div>
+                    <div class="duplicate-item">
+                        <strong>{{ stats.title_duplicates|default(0) }}</strong>
+                        <small>Similar Titles</small>
+                    </div>
+                    <div class="duplicate-item">
+                        <strong>{{ stats.content_duplicates|default(0) }}</strong>
+                        <small>Similar Content</small>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            <a href="/articles" class="btn btn-primary">
+                <i class="icon">📰</i>
+                View Articles
+            </a>
+            <a href="/crawl" class="btn btn-secondary">
+                <i class="icon">🔄</i>
+                Crawl Again
+            </a>
+        </div>
+    </div>
+{% endblock %}

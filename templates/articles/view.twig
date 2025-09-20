@@ -1,0 +1,18 @@
+{% extends "layout/base.twig" %}
+
+{% block title %}{{ title }} - News Crawler{% endblock %}
+
+{% block content %}
+    <div class="article-container">
+        <nav class="breadcrumb">
+            <a href="/articles" class="breadcrumb-link">
+                <i class="icon">←</i>
+                Back to Articles
+            </a>
+        </nav>
+
+        <article class="article-content">
+            {{ content|raw }}
+        </article>
+    </div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "layout/base.twig" %}
+
+{% block title %}News Articles - News Crawler{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>📰 News Articles</h1>
+        <a href="/crawl" class="btn btn-primary">
+            <i class="icon">🔍</i>
+            Crawl New Articles
+        </a>
+    </div>
+
+    {% if isEmpty %}
+        <div class="empty-state">
+            <div class="empty-icon">📰</div>
+            <h2>No articles found</h2>
+            <p>Start crawling to collect news articles about your topics of interest!</p>
+            <a href="/crawl" class="btn btn-primary btn-lg">
+                <i class="icon">🚀</i>
+                Start Crawling
+            </a>
+        </div>
+    {% else %}
+        <div class="articles-grid">
+            {% for article in articles %}
+                <article class="article-card">
+                    <header class="article-header">
+                        <h2 class="article-title">
+                            <a href="/articles/{{ article.filename }}">{{ article.title }}</a>
+                        </h2>
+                    </header>
+                    <div class="article-meta">
+                        <div class="meta-item">
+                            <strong>Source:</strong>
+                            <a href="{{ article.sourceLink }}" class="source-link" target="_blank" rel="noopener">
+                                {{ article.sourceDomain }}
+                                <i class="external-icon">🔗</i>
+                            </a>
+                        </div>
+                        <div class="meta-item">
+                            <strong>Saved:</strong>
+                            <time datetime="{{ article.date }}">{{ article.date }}</time>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
